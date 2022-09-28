@@ -59,6 +59,8 @@ sub new {
 
     my %dbs; # hash of all databases defined in DE
 
+    my $dbdescription;
+
     # auxiliary objects to resolve dependency like host or database type
     my $source = new Source_obj($dlpxObject, $debug);
     my $sourceconfigs = new SourceConfig_obj($dlpxObject, $debug);
@@ -77,7 +79,8 @@ sub new {
         _environments => $environments,     # environments list (host / user )
         _hosts => $hosts,                    # list of hosts
         _debug => $debug,
-        _namespace => $namespace
+        _namespace => $namespace,
+        _dbdescription => $dbdescription
    };
 
     bless($self,$classname);
@@ -299,6 +302,13 @@ sub LoadDBList
             $db->{"staging_host"}  = $self->{_hosts}->getHost($host);
         }
 
+        my $dbdescription =  $dbitem->{description};
+
+        if (defined($dbdescription)) {
+          # load db description
+          logger($self->{_debug},"db note/description $dbitem->{description} ",2);
+          $db->{"description"} = $dbdescription;
+        }
 
         # add database to hash of DB objects
 
